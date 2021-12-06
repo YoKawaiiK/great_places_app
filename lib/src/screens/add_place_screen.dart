@@ -18,22 +18,35 @@ class AddPlaceScreen extends StatefulWidget {
 
 class _AddPlaceScreenState extends State<AddPlaceScreen> {
   final GlobalKey<FormState> _form = GlobalKey();
+  bool _isValid = false;
+
   AddPlaceModel addPlace = AddPlaceModel();
 
   // File? _pickedImage;
 
   void _selectImage(File pickedImage) {
-    addPlace.pickedImage = pickedImage;
-    
+    setState(() {
+      addPlace.pickedImage = pickedImage;
+      _isFormValid();
+    });
+  }
+
+  void _isFormValid() {
+    if (!_form.currentState!.validate() || addPlace.pickedImage == null) {
+      _isValid = false;
+    } else {
+      _isValid = true;
+    }
   }
 
   void _savePlace(BuildContext context) {
-    if (!_form.currentState!.validate() || addPlace.pickedImage == null) return;
+    _isFormValid();
+    print(_isValid);
+    if (!_isValid) return;
 
     _form.currentState!.save();
 
-    Provider.of<GreatPlacesProvider>(context, listen: false )
-    .addPlace(addPlace);
+    Provider.of<GreatPlacesProvider>(context, listen: false).addPlace(addPlace);
 
     Navigator.of(context).pop();
   }
@@ -45,7 +58,13 @@ class _AddPlaceScreenState extends State<AddPlaceScreen> {
         title: Text("Add a new place"),
       ),
       body: Form(
+        onChanged: () {
+          setState(() {
+            _isFormValid();
+          });
+        },
         key: _form,
+        // autovalidateMode: AutovalidateMode.onUserInteraction,
         child: Column(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
@@ -74,15 +93,19 @@ class _AddPlaceScreenState extends State<AddPlaceScreen> {
                         addPlace.placeTitle = v;
                       },
                       validator: (v) {
-                        if (v == null) return "Please fill this field.";
-                        if (v.length < 5 || v.length > 200 ) return "the field should not contain more than 200 symbols and less than 5 characters";
+                        if (v == null || v.length == 0)
+                          return "Please fill this field.";
+                        if (v.length < 5 || v.length > 200)
+                          return "the field should not contain more than 200 symbols and less than 5 characters";
                         return null;
                       },
                     ),
                     SizedBox(
                       height: 10,
                     ),
-                    ImageInput(onSelectImage: _selectImage,),
+                    ImageInput(
+                      onSelectImage: _selectImage,
+                    ),
                   ],
                 ),
               ),
@@ -91,6 +114,9 @@ class _AddPlaceScreenState extends State<AddPlaceScreen> {
         ),
       ),
       floatingActionButton: FloatingActionButton(
+        backgroundColor: _isValid
+            ? Theme.of(context).colorScheme.secondary
+            : Theme.of(context).colorScheme.primary,
         child: Icon(Icons.add),
         onPressed: () {
           _savePlace(context);
