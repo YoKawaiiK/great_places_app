@@ -25,26 +25,35 @@ class PlacesListScreen extends StatelessWidget {
               icon: Icon(Icons.add)),
         ],
       ),
-      body: Consumer<GreatPlacesProvider>(
-        child: const Center(
-          child: Text("Its empty"),
-        ),
-        builder: (_ctx, greatPlaces, child) {
-          if (greatPlaces.places.isEmpty) {
-            return child!;
-          }
+      body: FutureBuilder(
+          future: Provider.of<GreatPlacesProvider>(context, listen: false)
+              .loadAndSetPlaces(),
+          builder: (ctx, snapshot) {
+            if (snapshot.connectionState == ConnectionState.waiting) {
+              return Center(child: const CircularProgressIndicator());
+            }
 
-          return ListView.builder(
-            itemCount: greatPlaces.places.length,
-            itemBuilder: (_ctx, i) => ListTile(
-              leading: CircleAvatar(
-                backgroundImage: FileImage(greatPlaces.places[i].image),
+            return Consumer<GreatPlacesProvider>(
+              child: const Center(
+                child: Text("Its empty"),
               ),
-              title: Text(greatPlaces.places[i].title),
-            ),
-          );
-        },
-      ),
+              builder: (_ctx, greatPlaces, child) {
+                if (greatPlaces.places.isEmpty) {
+                  return child!;
+                }
+
+                return ListView.builder(
+                  itemCount: greatPlaces.places.length,
+                  itemBuilder: (_ctx, i) => ListTile(
+                    leading: CircleAvatar(
+                      backgroundImage: FileImage(greatPlaces.places[i].image),
+                    ),
+                    title: Text(greatPlaces.places[i].title),
+                  ),
+                );
+              },
+            );
+          }),
 
       // Center(
       //   child: CircularProgressIndicator(),
