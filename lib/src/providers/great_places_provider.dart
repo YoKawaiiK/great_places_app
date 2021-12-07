@@ -16,7 +16,7 @@ class GreatPlacesProvider with ChangeNotifier {
     final newPlace = PlaceModel(
       id: DateTime.now().toString(),
       title: addPlace.placeTitle!,
-      location: null,
+      location: addPlace.placeLocation,
       image: addPlace.pickedImage!,
     );
 

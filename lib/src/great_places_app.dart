@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:great_places_app/src/providers/great_places_provider.dart';
 import 'package:great_places_app/src/screens/add_place_screen.dart';
+import 'package:great_places_app/src/screens/map_screen.dart';
 import 'package:great_places_app/src/screens/place_detail_screen.dart';
 import 'package:great_places_app/src/screens/places_list_screen.dart';
 import 'package:provider/provider.dart';
@@ -20,7 +21,7 @@ class GreatPlacesApp extends StatelessWidget {
             // theme: ThemeData(primarySwatch: Colors.grey),
             theme: ThemeData(
               primarySwatch: Colors.grey,
-              colorScheme: ColorScheme(
+              colorScheme: const ColorScheme(
                 primary: Color(0xff999999),
                 primaryVariant: Color(0xff4d4d4d),
                 secondary: Colors.teal,
@@ -35,15 +36,16 @@ class GreatPlacesApp extends StatelessWidget {
                 onError: Color(0xffffffff),
                 brightness: Brightness.light,
               ),
-              floatingActionButtonTheme: FloatingActionButtonThemeData(
+              floatingActionButtonTheme: const FloatingActionButtonThemeData(
                 backgroundColor: Colors.teal,
               ),
             ),
             home: PlacesListScreen(),
             routes: {
-              PlacesListScreen.routeName: (_) => PlacesListScreen(),
-              PlaceDetailScreen.routeName: (_) => PlaceDetailScreen(),
-              AddPlaceScreen.routeName: (_) => AddPlaceScreen(),
+              PlacesListScreen.routeName: (_ctx) => PlacesListScreen(),
+              PlaceDetailScreen.routeName: (_ctx) => PlaceDetailScreen(),
+              AddPlaceScreen.routeName: (_ctx) => AddPlaceScreen(),
+              MapScreen.routeName: (_ctx) => MapScreen(),
             },
           );
         });

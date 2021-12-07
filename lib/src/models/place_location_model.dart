@@ -1,8 +1,8 @@
 class PlaceLocationModel {
-  final double latitude;
-  final double longitude;
+  final double? latitude;
+  final double? longitude;
 
-  final String adress;
+  final String? adress;
 
   PlaceLocationModel({
     required this.latitude,
