@@ -52,7 +52,7 @@ class _MapScreenState extends State<MapScreen> {
         _mapController.move(_currentPosition!, 16);
       });
     } catch (e) {
-      print('_getCurrentUserLocation: $e');
+      // print('_getCurrentUserLocation: $e');
     }
   }
 
@@ -63,7 +63,7 @@ class _MapScreenState extends State<MapScreen> {
               as PlaceLocationModel;
       _adress = placeLocation.adress;
     } catch (e) {
-      print("_getAdress: $e");
+      // print("_getAdress: $e");
     }
   }
 

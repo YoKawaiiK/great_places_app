@@ -70,7 +70,7 @@ class GreatPlacesProvider with ChangeNotifier {
         ),
       );
     } catch (e) {
-      print(e);
+      // print(e);
       return null;
     }
   }
@@ -80,7 +80,7 @@ class GreatPlacesProvider with ChangeNotifier {
       final record =
           await DBHelper.selectPlaceLocationById(DBconstants.userPlaces, id) as Map<String, dynamic>;
 
-      print(record);
+      // print(record);
 
       return PlaceLocationModel(
         latitude: record[DBconstants.placesLatitude],
