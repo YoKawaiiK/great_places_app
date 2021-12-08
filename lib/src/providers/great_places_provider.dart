@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:flutter/widgets.dart';
 import 'package:great_places_app/src/models/add_place_model.dart';
+import 'package:great_places_app/src/models/place_location_model.dart';
 import 'package:great_places_app/src/models/place_model.dart';
 
 import '../helpers/db_helper.dart' as DBHelper;
@@ -18,6 +19,7 @@ class GreatPlacesProvider with ChangeNotifier {
       title: addPlace.placeTitle!,
       location: addPlace.placeLocation,
       image: addPlace.pickedImage!,
+      
     );
 
     _places.add(newPlace);
@@ -27,6 +29,9 @@ class GreatPlacesProvider with ChangeNotifier {
       DBconstants.placesId: newPlace.id,
       DBconstants.placesTitle: newPlace.title,
       DBconstants.placesImage: newPlace.image.path,
+      DBconstants.placesLatitude: newPlace.location!.latitude,
+      DBconstants.placesLongitude: newPlace.location!.longitude,
+      DBconstants.placesAdress: newPlace.location!.adress,
     });
   }
 
@@ -38,7 +43,11 @@ class GreatPlacesProvider with ChangeNotifier {
         id: item[DBconstants.placesId],
         title: item[DBconstants.placesTitle],
         image: File(item[DBconstants.placesImage]),
-        location: null,
+        location: PlaceLocationModel(
+          latitude: item[DBconstants.placesLatitude],
+          longitude: item[DBconstants.placesLongitude],
+          adress: item[DBconstants.placesAdress],
+        ),
       );
     }).toList();
 

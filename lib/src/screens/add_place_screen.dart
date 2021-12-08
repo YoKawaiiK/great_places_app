@@ -6,7 +6,6 @@ import 'package:great_places_app/src/models/place_location_model.dart';
 import 'package:great_places_app/src/providers/great_places_provider.dart';
 import 'package:great_places_app/src/screens/map_screen.dart';
 import 'package:great_places_app/src/widgets/image_input.dart';
-import 'package:great_places_app/src/widgets/location_input.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:path/path.dart';
 import 'package:provider/provider.dart';
@@ -26,16 +25,14 @@ class _AddPlaceScreenState extends State<AddPlaceScreen> {
 
   AddPlaceModel _addPlace = AddPlaceModel();
 
-
   void _selectImage(File pickedImage) {
+    _addPlace.pickedImage = pickedImage;
     setState(() {
-      _addPlace.pickedImage = pickedImage;
       _isFormValid();
     });
   }
 
   void _isFormValid([BuildContext? context]) {
-
     if (!_form.currentState!.validate() ||
         _addPlace.pickedImage == null ||
         _addPlace.placeLocation == null) {
@@ -60,7 +57,9 @@ class _AddPlaceScreenState extends State<AddPlaceScreen> {
 
     print(placeLocation.toString());
 
-    _isFormValid();
+    setState(() {
+      _isFormValid();
+    });
   }
 
   void _savePlace(BuildContext context) {
@@ -69,12 +68,6 @@ class _AddPlaceScreenState extends State<AddPlaceScreen> {
     if (!_isValid) return;
 
     _form.currentState!.save();
-
-    print(_addPlace.placeLocation!.adress);
-    print(_addPlace.placeLocation!.latitude);
-    print(_addPlace.placeLocation!.longitude);
-    print(_addPlace.pickedImage);
-    print(_addPlace.placeTitle);
 
     Provider.of<GreatPlacesProvider>(context, listen: false)
         .addPlace(_addPlace);

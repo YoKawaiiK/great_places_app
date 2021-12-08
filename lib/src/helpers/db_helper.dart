@@ -5,10 +5,6 @@ import 'package:path/path.dart' as path;
 
 import '../constants/database.dart' as DBConstants;
 
-// class DBHelper {
-//   static inse
-// }
-
 int _version = 1;
 
 Future<sql.Database> _database() async {
@@ -23,7 +19,9 @@ Future<sql.Database> _database() async {
   return db;
 }
 
-Future<void> insert(String table, Map<String, Object> data) async {
+Future<void> insert(String table, Map<String, dynamic> data) async {
+  print(data);
+
   await _database()
     ..insert(
       table,

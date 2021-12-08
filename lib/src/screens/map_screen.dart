@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
-import 'package:geocoding/geocoding.dart' as Geocoding;
 import 'package:great_places_app/src/models/place_location_model.dart';
 import 'package:great_places_app/src/utils/check_internet.dart';
 import 'package:latlong2/latlong.dart';
-import 'package:location/location.dart' as Location;
 import 'package:material_floating_search_bar/material_floating_search_bar.dart';
+
+import '../helpers/location_helper.dart' as LocationHelper;
 
 class MapScreen extends StatefulWidget {
   static const String routeName = "MapScreen";
@@ -40,75 +40,45 @@ class _MapScreenState extends State<MapScreen> {
   }
 
   Future<void> _getCurrentUserLocation() async {
-    final location = Location.Location();
+    try {
+      final position = await LocationHelper.getCurrentUserPosition();
+      _currentPosition = position;
+      _getAdress();
 
-    bool _serviceEnabled;
-    Location.PermissionStatus _permissionGranted;
-    Location.LocationData _locationData;
-
-    _serviceEnabled = await location.serviceEnabled();
-    if (!_serviceEnabled) {
-      _serviceEnabled = await location.requestService();
-      if (!_serviceEnabled) {
-        return;
-      }
+      setState(() {
+        markerAdd(_currentPosition!);
+        _mapController.move(_currentPosition!, 16);
+      });
+    } catch (e) {
+      print('_getCurrentUserLocation: $e');
     }
-
-    _permissionGranted = await location.hasPermission();
-    if (_permissionGranted == Location.PermissionStatus.denied) {
-      _permissionGranted = await location.requestPermission();
-      if (_permissionGranted != Location.PermissionStatus.granted) {
-        return;
-      }
-    }
-
-    final locationData = await location.getLocation();
-
-    _currentPosition = LatLng(locationData.latitude!, locationData.longitude!);
-
-    await _getAdress();
-
-    setState(() {
-      markerAdd(_currentPosition!);
-      _mapController.move(_currentPosition!, 16);
-    });
   }
 
   Future<void> _getAdress() async {
-    final isHasInternet = await check();
-    // print(isHasInternet);
-    if (!isHasInternet) return;
-
-
-      List<Geocoding.Placemark> placemarks =
-          await Geocoding.placemarkFromCoordinates(
-        _currentPosition!.latitude,
-        _currentPosition!.longitude,
-      );
-      _adress =
-          "${placemarks[0].country}, ${placemarks[0].administrativeArea}, ${placemarks[0].street}";
-    
+    try {
+      final placeLocation =
+          await LocationHelper.getAdressWithLatLng(_currentPosition!)
+              as PlaceLocationModel;
+      _adress = placeLocation.adress;
+    } catch (e) {
+      print("_getAdress: $e");
+    }
   }
 
   Future<void> _getWritedAdress(BuildContext context, String adress) async {
     try {
-          final isHasInternet = await check();
-    // print(isHasInternet);
-    if (!isHasInternet) return;
+      final placeLocation = await LocationHelper.getAdressWithWrite(adress);
 
-    final place = await Geocoding.locationFromAddress(adress);
+      _currentPosition!.latitude = placeLocation!.latitude!;
+      _currentPosition!.longitude = placeLocation.longitude!;
+      _adress = adress;
 
-    _currentPosition!.latitude = place[0].latitude;
-    _currentPosition!.longitude = place[0].longitude;
-    _adress = adress;
-
-    setState(() {
-      markerAdd(_currentPosition!);
-    });
+      setState(() {
+        markerAdd(_currentPosition!);
+      });
     } catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text("Incorrect adress."))
-      );
+      ScaffoldMessenger.of(context)
+          .showSnackBar(const SnackBar(content: Text("Incorrect adress.")));
     }
   }
 
