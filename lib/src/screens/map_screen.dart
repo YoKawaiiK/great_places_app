@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:great_places_app/src/models/place_location_model.dart';
+import 'package:great_places_app/src/providers/great_places_provider.dart';
 import 'package:great_places_app/src/utils/check_internet.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:material_floating_search_bar/material_floating_search_bar.dart';
+import 'package:provider/provider.dart';
 
 import '../helpers/location_helper.dart' as LocationHelper;
 
@@ -46,7 +48,7 @@ class _MapScreenState extends State<MapScreen> {
       _getAdress();
 
       setState(() {
-        markerAdd(_currentPosition!);
+        _markerAdd(_currentPosition!);
         _mapController.move(_currentPosition!, 16);
       });
     } catch (e) {
@@ -74,7 +76,7 @@ class _MapScreenState extends State<MapScreen> {
       _adress = adress;
 
       setState(() {
-        markerAdd(_currentPosition!);
+        _markerAdd(_currentPosition!);
       });
     } catch (e) {
       ScaffoldMessenger.of(context)
@@ -82,7 +84,7 @@ class _MapScreenState extends State<MapScreen> {
     }
   }
 
-  void markerAdd(LatLng position) {
+  void _markerAdd(LatLng position) {
     _markers.clear();
     _markers.add(position);
   }
@@ -90,7 +92,7 @@ class _MapScreenState extends State<MapScreen> {
   void _onLongMapPress(LatLng latLng) async {
     await _getAdress();
     setState(() {
-      markerAdd(latLng);
+      _markerAdd(latLng);
     });
   }
 
@@ -99,22 +101,18 @@ class _MapScreenState extends State<MapScreen> {
     return WillPopScope(
       onWillPop: () async {
         await _backScreenWithData(context);
+
         return false;
       },
       child: Scaffold(
-          // appBar: AppBar(
-          //   title: Text("Select your location"),
-          // ),
           body: Stack(
             fit: StackFit.expand,
             children: [
               FlutterMap(
-                // key: ValueKey(MediaQuery.of(context).orientation),
-                key: const ValueKey("Map"),
+                key: ValueKey(MediaQuery.of(context).orientation),
+                // key: const ValueKey("Map"),
                 mapController: _mapController,
                 options: MapOptions(
-                  // center: currentPosition,
-
                   onLongPress: (_position, latLng) {
                     _onLongMapPress(latLng);
                   },
@@ -155,10 +153,6 @@ class _MapScreenState extends State<MapScreen> {
                 builder: (_ctx, transition) {
                   return ClipRRect(
                     borderRadius: BorderRadius.circular(8),
-                    // child: Material(
-                    //   color: Colors.white,
-                    //   elevation: 4.0,
-                    // ),
                   );
                 },
               )

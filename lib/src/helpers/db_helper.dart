@@ -20,7 +20,6 @@ Future<sql.Database> _database() async {
 }
 
 Future<void> insert(String table, Map<String, dynamic> data) async {
-  print(data);
 
   await _database()
     ..insert(
@@ -33,4 +32,32 @@ Future<void> insert(String table, Map<String, dynamic> data) async {
 Future<List<Map<String, dynamic>>> select(String table) async {
   final db = await _database();
   return db.query(table);
+}
+
+Future<Map<String, Object?>> selectPlaceById(String table, String id) async {
+  final db = await _database();
+
+  final dbRecords = await db.query(
+    table,
+    where: '${DBConstants.placesId} = ?',
+    whereArgs: [id],
+    limit: 1,
+  );
+
+  return dbRecords[0];
+}
+
+Future<Map<String, dynamic>?> selectPlaceLocationById(String table, String id) async {
+  final db = await _database();
+
+  final dbRecord = await db.query(table, where: '${DBConstants.placesId} = ?', 
+  whereArgs: [id],
+  columns: [
+    DBConstants.placesLatitude, 
+    DBConstants.placesLongitude, 
+    DBConstants.placesAdress, 
+    ]
+  );
+
+  return dbRecord[0];
 }

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:great_places_app/src/providers/great_places_provider.dart';
 import 'package:great_places_app/src/screens/add_place_screen.dart';
+import 'package:great_places_app/src/screens/map_place_detail_screen.dart';
 import 'package:great_places_app/src/screens/map_screen.dart';
 import 'package:great_places_app/src/screens/place_detail_screen.dart';
 import 'package:great_places_app/src/screens/places_list_screen.dart';
@@ -46,6 +47,7 @@ class GreatPlacesApp extends StatelessWidget {
               PlaceDetailScreen.routeName: (_ctx) => PlaceDetailScreen(),
               AddPlaceScreen.routeName: (_ctx) => AddPlaceScreen(),
               MapScreen.routeName: (_ctx) => MapScreen(),
+              MapPlaceDetailScreen.routeName: (_ctx) => MapPlaceDetailScreen(),
             },
           );
         });

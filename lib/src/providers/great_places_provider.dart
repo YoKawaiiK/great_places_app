@@ -19,7 +19,6 @@ class GreatPlacesProvider with ChangeNotifier {
       title: addPlace.placeTitle!,
       location: addPlace.placeLocation,
       image: addPlace.pickedImage!,
-      
     );
 
     _places.add(newPlace);
@@ -52,5 +51,44 @@ class GreatPlacesProvider with ChangeNotifier {
     }).toList();
 
     notifyListeners();
+  }
+
+  Future<PlaceModel?> findById(String id) async {
+    try {
+      final dbRecord =
+          await DBHelper.selectPlaceById(DBconstants.userPlaces, id)
+              as Map<String, dynamic>;
+
+      return PlaceModel(
+        id: dbRecord[DBconstants.placesId],
+        title: dbRecord[DBconstants.placesTitle],
+        image: File(dbRecord[DBconstants.placesImage]),
+        location: PlaceLocationModel(
+          latitude: dbRecord[DBconstants.placesLatitude],
+          longitude: dbRecord[DBconstants.placesLongitude],
+          adress: dbRecord[DBconstants.placesAdress],
+        ),
+      );
+    } catch (e) {
+      print(e);
+      return null;
+    }
+  }
+
+  Future<PlaceLocationModel?> getPlaceLocation(String id) async {
+    try {
+      final record =
+          await DBHelper.selectPlaceLocationById(DBconstants.userPlaces, id) as Map<String, dynamic>;
+
+      print(record);
+
+      return PlaceLocationModel(
+        latitude: record[DBconstants.placesLatitude],
+        longitude: record[DBconstants.placesLongitude],
+        adress: record[DBconstants.placesAdress],
+      );
+    } catch (e) {
+      return null;
+    }
   }
 }
